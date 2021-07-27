@@ -23,7 +23,7 @@ def get_norm_layer(norm_type='instance'):
     return norm_layer
 
 
-def init_weights(net, init_gain=0.02):
+def init_weights(net, init_gain=0.02, net_name='network'):
     """
     Let us keep it simple and only use normal initialization
     """
@@ -35,16 +35,10 @@ def init_weights(net, init_gain=0.02):
                 init.constant_(m.bias.data, 0.0)
         
     net.apply(init_func)
-    print('initializae network with normal distribution')
+    print(f'initialize {net_name} with normal distribution')
     
     
-def get_scheduler(
-    optimizer, *,
-    lr_policy='linear', 
-    n_epochs_no_decay=100, 
-    n_epochs_decay=100,
-    lr_decay_steps=50
-):
+def get_scheduler(optimizer, opt):
     """
     Retrun a learning rate scheduler
     
@@ -59,9 +53,12 @@ def get_scheduler(
     See https://pytorch.org/docs/stable/optim.html for more detail
     """
     
+    epochs_no_decay = opt.epochs - opt.lr_linear
+    lr_policy = opt.lr_policy
+    
     if lr_policy == 'linear':
         def lr_lambda(epoch):
-            return 1. - max(0, epoch - n_epochs_no_decay) / float(n_epochs_decay + 1)
+            return 1. - max(0, epoch - epochs_no_decay) / float(opt.lr_linear + 1)
         scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_lambda)
     elif lr_policy == 'step':
         # multiply by gamma every lr_decay_steps
@@ -70,7 +67,7 @@ def get_scheduler(
         #     lr = .5 for 0 <= epoch < 50;
         #     lr = .05 for 50 <= epoch < 100;
         #     lr = .005 for 100 <= epoch < 150;
-        scheduler = lr_scheduler.StepLR(optimizer, step_size=lr_decay_steps, gamma=.1)
+        scheduler = lr_scheduler.StepLR(optimizer, step_size=opt.lr_step, gamma=.1)
     elif lr_policy == 'plateau':
         # Reduce learning rate when a metric has stopped improving. 
         # Models often benefit from reducing the learning rate by a factor of 2-10 once learning stagnates. 
@@ -87,10 +84,6 @@ def get_scheduler(
         #        then multiply current learning rate by the factor.
         #        On the contrary, if the loss is 17.99, lr doesn't have to be changed.
         scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=.2, threshold=.01, patience=5)
-    elif lr_policy == 'cosine':
-        # make cosinusoidal change between η_min and η_max = initial_learning_rate every T_max epochs
-        # lr_t = η_min + .5(η_max − η_min)(1 + cos(π * T_cur / T_max))
-        scheduler = lr_scheduler.CosineAnnealingLR(optimizer, T_max=n_epoch_no_decay, eta_min=0)
     else:
         return NotImplementedError(f'learning rate policy {lr_policy} is not implemented')
     return scheduler
@@ -140,7 +133,7 @@ class ImagePool():
                 self.images.append(image)
                 return_images.append(image)
             else:
-                if random.uniform(0, 1) < p:
+                if random.uniform(0, 1) < self.p:
                     # with chance p, return a historical image and 
                     # use newly generated image to fill the vacancy
                     random_id = random.randint(0, self.pool_size - 1)

@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH --partition=volta
+#SBATCH --account mlg-core
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --time=10:00:00
+#SBATCH --job-name=256
+#SBATCH --output=256.out
+#SBATCH --error=256.err
+srun --unbuffered python /sdcc/u/yhuang2/PROJs/GAN/collisionGAN/compression/unet/train.py -s 256 -d model_pt -b 2 -e 6 -c 200 

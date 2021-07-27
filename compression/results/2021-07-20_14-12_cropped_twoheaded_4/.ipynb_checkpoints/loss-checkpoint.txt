@@ -1,0 +1,4 @@
+Test loss with float16:
+     classification, regression
+mean       0.010161,   0.069867
+std        0.002343,   0.011527

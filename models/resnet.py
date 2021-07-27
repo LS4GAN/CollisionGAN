@@ -159,12 +159,11 @@ class ResnetGenerator(nn.Module):
         
         self.model = nn.Sequential(*model)
     
-    
     def forward(self, x):
         return self.model(x)
 
 if __name__ == '__main__':
-	# The following trile shows that
+	# The following trial shows that
 	# 1. Width and height of size $4k$ are preserved.
 	# 2. Width and height of size $4k + i$, $i = 1, 2, 3$, will be mapped to $4(k + 1)$.  
 	
