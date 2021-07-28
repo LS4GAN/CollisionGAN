@@ -15,8 +15,8 @@ I hack the original CycleGAN code and make it simply because
 3. The simplification help me to compartmentalize my understanding of the building blocks of CycleGAN.
 
 
-CLAIM: I haven't give check it very my simplification a thorough check. 
+CLAIM: I haven't give my simplification a thorough check. So please don't trust it. 
 
 TO-DO:
-1. I will use the `PIL` Python package to convert our npz files to images, and run the original CycleGAN in order to check whether my simplification works properly;
+1. I will use the `PIL` Python package to convert our npz files to images, and run the original CycleGAN in order to check whether my simplification works properly; I will post the image dataset when it is done.
 2. Use paired test dataset to see how the translation works.
