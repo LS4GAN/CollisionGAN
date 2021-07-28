@@ -10,7 +10,7 @@ For a simplied CycleGAN implementation, there are only three places you need to 
 3. `utils/network.py` that has a few utility functions.
 
 I hack the original CycleGAN code and make it simply because
-1. I want to force myself to look as close as possible into it which may make it easier if we want to utilize some part of there code;
+1. I want to force myself to look as close as possible into it;
 2. The original implementation is very comprehensive but some parts of it is not very necessary for us and distractive;
 3. The simplification help me to compartmentalize my understanding of the building blocks of CycleGAN.
 
