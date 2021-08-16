@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import torch
 from collections import OrderedDict
 from abc import ABC, abstractmethod
@@ -105,15 +106,12 @@ class BaseModel(ABC):
         """
         for name in self.model_names:
             if isinstance(name, str):
-                save_filename = '%s_net_%s.pth' % (epoch, name)
+                save_filename = f'{epoch}_net_{name}.pth'
+                if not Path(self.save_dir).exists():
+                    Path(self.save_dir).mkdir(parents=True)
                 save_path = os.path.join(self.save_dir, save_filename)
                 net = getattr(self, 'net' + name)
-
-                if len(self.gpu_ids) > 0 and torch.cuda.is_available():
-                    torch.save(net.module.cpu().state_dict(), save_path)
-                    net.cuda(self.gpu_ids[0])
-                else:
-                    torch.save(net.cpu().state_dict(), save_path)
+                torch.save(net.state_dict(), save_path)
 
     def load_networks(self, epoch):
         """Load all the networks from the disk.
